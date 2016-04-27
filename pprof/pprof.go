@@ -36,6 +36,7 @@ type Options struct {
 	URLSuffix   string   `short:"s" long:"suffix" default:"/debug/pprof/profile" description:"URL path of pprof profile"`
 	BinaryFile  string   `short:"b" long:"binaryinput" description:"File path of previously saved binary profile. (binary profile is anything accepted by https://golang.org/cmd/pprof)"`
 	BinaryName  string   `long:"binaryname" description:"File path of the binary that the binaryinput is for, used for pprof inputs"`
+	Binary      string   `long:"binary" description:"File path of the binary"`
 	TimeSeconds int      `short:"t" long:"time" default:"30" description:"Duration to profile for"`
 	ExtraArgs   []string `long:"pprofArgs"  description:"Extra arguments for pprof"`
 }
@@ -65,7 +66,12 @@ func getArgs(opts Options) ([]string, error) {
 		}
 
 		u.Path = opts.URLSuffix
-		pprofArgs = append(pprofArgs, "-seconds", fmt.Sprint(opts.TimeSeconds), u.String())
+		pprofArgs = append(pprofArgs, "-seconds", fmt.Sprint(opts.TimeSeconds))
+
+		if opts.Binary != "" {
+			pprofArgs = append(pprofArgs, opts.Binary)
+		}
+		pprofArgs = append(pprofArgs, u.String())
 	}
 
 	return pprofArgs, nil
